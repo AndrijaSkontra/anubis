@@ -110,7 +110,8 @@ interface OhNoesParams {
   ];
 
   const status: HTMLParagraphElement = g("status") as HTMLParagraphElement;
-  const image: HTMLImageElement = g("image") as HTMLImageElement;
+  const image: HTMLImageElement | null = g("image") as HTMLImageElement | null;
+  const spinner: HTMLElement | null = g("spinner");
   const title: HTMLHeadingElement = g("title") as HTMLHeadingElement;
   const progress: HTMLDivElement = g("progress") as HTMLDivElement;
 
@@ -129,12 +130,20 @@ interface OhNoesParams {
 
   const ohNoes = ({ titleMsg, statusMsg, imageSrc }: OhNoesParams) => {
     title.innerHTML = titleMsg;
+    title.style.display = "block";
     status.innerHTML = statusMsg;
-    image.src = imageSrc;
+    if (spinner) {
+      spinner.style.display = "none";
+    }
+    if (image) {
+      image.src = imageSrc;
+      image.style.display = "inline-block";
+    }
     progress.style.display = "none";
   };
 
-  status.innerHTML = t("calculating");
+  // Keep a single calm loading message; do not surface PoW internals.
+  status.innerHTML = t("loading");
 
   for (const { value, name, msg } of dependencies) {
     if (!value) {
@@ -159,19 +168,6 @@ interface OhNoesParams {
     return;
   }
 
-  status.innerHTML = `${t("calculating_difficulty")} ${rules.difficulty}, `;
-  progress.style.display = "inline-block";
-
-  // the whole text, including "Speed:", as a single node, because some browsers
-  // (Firefox mobile) present screen readers with each node as a separate piece
-  // of text.
-  const rateText = document.createTextNode(`${t("speed")} 0kH/s`);
-  status.appendChild(rateText);
-
-  let lastSpeedUpdate = 0;
-  let showingApology = false;
-  const likelihood = Math.pow(16, -rules.difficulty);
-
   try {
     const t0 = Date.now();
     const { hash, nonce } = await process(
@@ -179,34 +175,8 @@ interface OhNoesParams {
       challenge.randomData,
       rules.difficulty,
       null,
-      (iters: number) => {
-        const delta = Date.now() - t0;
-        // only update the speed every second so it's less visually distracting
-        if (delta - lastSpeedUpdate > 1000) {
-          lastSpeedUpdate = delta;
-          rateText.data = `${t("speed")} ${(iters / delta).toFixed(3)}kH/s`;
-        }
-        // the probability of still being on the page is (1 - likelihood) ^ iters.
-        // by definition, half of the time the progress bar only gets to half, so
-        // apply a polynomial ease-out function to move faster in the beginning
-        // and then slow down as things get increasingly unlikely. quadratic felt
-        // the best in testing, but this may need adjustment in the future.
-
-        const probability = Math.pow(1 - likelihood, iters);
-        const distance = (1 - Math.pow(probability, 2)) * 100;
-        progress.ariaValueNow = `${distance}`;
-        if (progress.firstElementChild !== null) {
-          (progress.firstElementChild as HTMLElement).style.width =
-            `${distance}%`;
-        }
-
-        if (probability < 0.1 && !showingApology) {
-          status.append(
-            document.createElement("br"),
-            document.createTextNode(t("verification_longer")),
-          );
-          showingApology = true;
-        }
+      (_iters: number) => {
+        // Intentionally no progress/speed UI updates.
       },
     );
     const t1 = Date.now();

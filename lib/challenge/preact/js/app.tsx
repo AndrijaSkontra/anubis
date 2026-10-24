@@ -1,6 +1,6 @@
 import { render, h, Fragment } from "preact";
 import { useState, useEffect } from "preact/hooks";
-import { g, j, r, u, x } from "./xeact.js";
+import { g, j, u, x } from "./xeact.js";
 import { Sha256 } from "@aws-crypto/sha256-js";
 
 /** @jsx h */
@@ -23,7 +23,6 @@ interface PreactInfo {
 
 const App = () => {
   const [state, setState] = useState<PreactInfo>();
-  const [imageURL, setImageURL] = useState<string | null>(null);
   const [passed, setPassed] = useState<boolean>(false);
   const [challenge, setChallenge] = useState<string | null>(null);
 
@@ -36,7 +35,6 @@ const App = () => {
       return;
     }
 
-    setImageURL(state?.pensive_url);
     const hash = new Sha256("");
     hash.update(state.challenge);
     setChallenge(toHexString(hash.digestSync()));
@@ -70,15 +68,8 @@ const App = () => {
 
   return (
     <>
-      {imageURL !== null && (
-        <img src={imageURL} style={{ width: "100%", maxWidth: "256px" }} />
-      )}
-      {state !== undefined && (
-        <>
-          <p id="status">{state.loading_message}</p>
-          <p>{state.connection_security_message}</p>
-        </>
-      )}
+      <div id="spinner" class="spinner" aria-hidden="true"></div>
+      {state !== undefined && <p id="status">{state.loading_message}</p>}
     </>
   );
 };

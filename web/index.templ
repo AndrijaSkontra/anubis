@@ -27,35 +27,61 @@ templ base(title string, body templ.Component, impressum *config.Impressum, hone
             display: flex;
             justify-content: center;
             align-items: center;
-            margin-left: auto;
-            margin-right: auto;
+            margin: 0;
+            background: #ffffff !important;
+            color: #222222 !important;
+            font-family: system-ui, -apple-system, Segoe UI, Roboto, sans-serif;
+        }
+
+        main {
+            max-width: none;
+            padding: 1.5rem;
+            margin: 0;
         }
 
         .centered-div {
             text-align: center;
         }
 
+        footer,
+        #progress,
+        details {
+            display: none !important;
+        }
+
+        body:has(#spinner) #title {
+            display: none !important;
+        }
+
         #status {
             font-variant-numeric: tabular-nums;
+            font-size: 1.05rem;
+            color: #222222;
+            margin: 0;
         }
 
-        #progress {
-            display: none;
-            width: 90%;
-            width: min(20rem, 90%);
-            height: 2rem;
-            border-radius: 1rem;
-            overflow: hidden;
-            margin: 1rem 0 2rem;
-            outline-offset: 2px;
-            outline: #b16286 solid 4px;
+        .spinner {
+            width: 2.5rem;
+            height: 2.5rem;
+            margin: 0 auto 1.25rem;
+            border: 3px solid #e5e5e5;
+            border-top-color: #333333;
+            border-radius: 50%;
+            animation: anubis-spin 0.75s linear infinite;
         }
 
-        .bar-inner {
-            background-color: #b16286;
-            height: 100%;
-            width: 0;
-            transition: width 0.25s ease-in;
+        @keyframes anubis-spin {
+            to {
+                transform: rotate(360deg);
+            }
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+            .spinner {
+                animation: none;
+                border-top-color: #e5e5e5;
+                border-right-color: #333333;
+            }
         }
     	</style>
 			@templ.JSONScript("anubis_version", anubis.Version)
