@@ -15,13 +15,13 @@ func TestLocalizationService(t *testing.T) {
 
 	loadingStrMap := map[string]string{
 		"de":    "Wird geladen …",
-		"en":    "Loading...",
+		"en":    "Checking if you're a real person...",
 		"es":    "Cargando...",
 		"et":    "Laadin...",
 		"fil":   "Naglo-load...",
 		"fr":    "Chargement...",
 		"ja":    "ロード中...",
-		"hr":    "Provjeram jesi li prava osoba...",
+		"hr":    "Provjeravam jesi li prava osoba...",
 		"is":    "Hleður...",
 		"nb":    "Laster inn...",
 		"nl":    "Laden...",

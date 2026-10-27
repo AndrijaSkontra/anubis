@@ -53,7 +53,7 @@ var (
 	dynamicCookieSuffix      = flag.Bool("dynamic-cookie-suffix", true, "if true, generates a suffix for cookie names based on cookie settings")
 	difficultyInJWT          = flag.Bool("difficulty-in-jwt", false, "if true, adds a difficulty field in the JWT claims")
 	useSimplifiedExplanation = flag.Bool("use-simplified-explanation", true, "deprecated: has no effect, the simplified explanation is always used")
-	forcedLanguage           = flag.String("forced-language", "hr", "if set, this language is being used instead of the one from the request's Accept-Language header")
+	forcedLanguage           = flag.String("forced-language", "en", "if set, this language is being used instead of the one from the request's Accept-Language header")
 	hs512Secret              = flag.String("hs512-secret", "", "secret used to sign JWTs, uses ed25519 if not set")
 	cookieSecure             = flag.Bool("cookie-secure", true, "if true, sets the secure flag on Anubis cookies")
 	cookieHttpOnly           = flag.Bool("cookie-http-only", false, "if true, sets the HttpOnly flag on Anubis cookies")
